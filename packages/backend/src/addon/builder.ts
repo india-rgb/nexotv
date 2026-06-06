@@ -95,7 +95,7 @@ async function createAddon(config: AddonConfig) {
 
         builder.defineStreamHandler(async ({ type, id }) => {
             try {
-                const streams = await addonInstance.getStreams(type, id);
+                const streams = await addonInstance.getStreams(type, id, addonInstance._addonBaseUrl);
                 if (!streams || streams.length === 0) return { streams: [] };
                 if (env.DEBUG) {
                     console.log('[DEBUG] Stream request', { id, count: streams.length });

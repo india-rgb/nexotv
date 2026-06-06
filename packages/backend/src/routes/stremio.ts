@@ -20,7 +20,7 @@ function maybeDecryptConfig(token: string) {
     return tryParseConfigToken(token);
 }
 
-const STATIC_PREFIXES = new Set(['css', 'js', 'html', 'logo', 'images', 'fonts', 'assets']);
+const STATIC_PREFIXES = new Set(['css', 'js', 'html', 'logo', 'images', 'fonts', 'assets', 'proxy', 'health', 'favicon.ico']);
 
 function isConfigToken(token: string) {
     if (!token) return false;
@@ -70,6 +70,15 @@ router.use('/:token', async (req: any, res, next) => {
     req.addonInterface = iface;
     req.configToken = token;
     req.userConfig = config;
+
+    // Inject the addon base URL so that getStreams() can build absolute proxy
+    // URLs that point back to this server.  We set it on every request because
+    // the host header (and therefore the base URL) might change between requests
+    // on platforms like Render.com where the custom domain and the default
+    // *.onrender.com domain are both valid.
+    if (iface.addonInstance) {
+        iface.addonInstance._addonBaseUrl = `${req.protocol}://${req.get('host')}`;
+    }
 
     next();
 });

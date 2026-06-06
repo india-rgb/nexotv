@@ -7,6 +7,7 @@ import { globalIpLimiter } from './src/middleware/rateLimiter';
 import apiRouter from './src/routes/api';
 import pagesRouter from './src/routes/pages';
 import stremioRouter from './src/routes/stremio';
+import hlsProxyRouter from './src/routes/hlsProxy';
 import * as sqliteCache from './src/utils/sqliteCache';
 import { buildPromiseCache } from './src/addon/M3UEPGAddon';
 import { startWatchdog, getSnapshot } from './src/utils/metrics';
@@ -68,6 +69,9 @@ app.get('/favicon.ico', (req, res) => {
 
 app.use(apiRouter);
 app.use(pagesRouter);
+// HLS proxy MUST be registered before the Stremio router to prevent
+// the /:token middleware from intercepting /proxy/hls/* paths.
+app.use(hlsProxyRouter);
 app.use(stremioRouter);
 
 app.use('*', (req, res) => res.status(404).json({ error: 'Not found' }));

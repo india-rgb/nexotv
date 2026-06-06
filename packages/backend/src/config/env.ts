@@ -57,6 +57,14 @@ const env = {
     METRICS_SAMPLE_INTERVAL_MS: parseInt(process.env.METRICS_SAMPLE_INTERVAL_MS || '30000', 10),
     METRICS_WARN_HEAP_MB: parseInt(process.env.METRICS_WARN_HEAP_MB || '512', 10),
     METRICS_CRITICAL_HEAP_MB: parseInt(process.env.METRICS_CRITICAL_HEAP_MB || '768', 10),
+    /**
+     * HLS_PROXY_ENABLED (default: true)
+     * When true the addon rewrites all stream URLs through the built-in HLS
+     * reverse proxy (/proxy/hls/*) so that Android TV internal players
+     * (ExoPlayer, libVLC, MPV) receive custom headers and rewritten segment
+     * URLs.  Set to "false" only for debugging or if you run your own CDN.
+     */
+    HLS_PROXY_ENABLED: (process.env.HLS_PROXY_ENABLED || 'true').toLowerCase() !== 'false',
 };
 
 export { repoRoot };
